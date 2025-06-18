@@ -2,7 +2,9 @@
   "name": "@con-rose/dev_ops",
   "version": "0.1.0",
   "private": true,
-  "files": ["out"],
+  "files": [
+    "out"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -23,6 +25,7 @@
     "eslint-config-next": "15.3.3",
     "graphql": "^16.11.0",
     "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.2",
     "typescript": "^5"
   }

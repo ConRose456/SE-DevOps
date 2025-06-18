@@ -4,7 +4,7 @@ const API_GATEWAY_ENDPOINT = "https://k4iq4bzva9.execute-api.eu-west-2.amazonaws
 
 export class GraphQlApiClient {
 
-    async fetch(query: any, variables: any) {
+    async fetch(query: string, variables: object) {
         const response = await fetch(API_GATEWAY_ENDPOINT, {
             method: 'POST',
             headers: {
