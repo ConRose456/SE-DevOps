@@ -2,6 +2,7 @@
   "name": "dev_ops",
   "version": "0.1.0",
   "private": true,
+  "files": ["out"],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
