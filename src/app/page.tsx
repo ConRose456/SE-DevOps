@@ -1,20 +1,26 @@
 "use client"
 
 import { AppLayout, SideNavigation, TopNavigation } from '@cloudscape-design/components';
-import { GraphQlApiClient } from '@/clients/graphQlApiClient';
+import { GraphQlApiClient } from '../clients/GraphQlApiClient';
 import { HashRouter } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 import "./globals.css";
 
-export default async function Home() {
+
+export default function Home() {
+  const [state, setState] = useState("");
+
   const graphqlClient = new GraphQlApiClient();
 
-  const response = await graphqlClient.fetch(
-    "query { hello { __typename id world { __typename text }}}",
-    {}  
-  );
-
-  console.log(JSON.stringify(response));
+  useEffect(() => {
+    (async () => {
+      graphqlClient.fetch(
+        "query { hello { __typename id world { __typename text }}}",
+        {}
+      ).then((res) => setState(JSON.stringify(res, null, 2)));
+    })()
+  }, []);
 
   return (
     <main>
@@ -40,7 +46,7 @@ export default async function Home() {
             }
             content={
               <div>
-                <p>{response}</p>
+                <p>{state}</p>
               </div>
             }
           />
