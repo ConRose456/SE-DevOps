@@ -12,6 +12,6 @@ jobs:
       - name: Trigger SE-DevOpsCDK Workflow
         run: |
           curl -X POST \
-          -H "Authorization: token ${{ secrets.MY_GH_PAT }}" \
-          -d '{"event_type": "trigger_build"}' \
-          https://api.github.com/repos/ConRose456/SE-DevOpsCDK/dispatches
+            -H "Authorization: token ${{ secrets.MY_GH_PAT }}" \
+            -d '{"event_type": "se-devops-trigger"}' \
+            https://api.github.com/repos/conrose456/SE-DevOpsCDK/dispatches
