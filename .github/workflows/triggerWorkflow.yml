@@ -15,6 +15,11 @@ jobs:
           repository: ConRose456/SE-DevOps
           token: ${{ secrets.MY_GH_PAT }}
           path: devops
+      
+      - name: Configure npm to use GitHub Packages
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.MY_GH_PAT }}" > devops/.npmrc
+          echo "@conrose456:registry=https://npm.pkg.github.com/" >> ~/.npmrc
 
       - name: Publish new version
         run: |
