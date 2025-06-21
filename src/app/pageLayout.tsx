@@ -3,6 +3,7 @@ import { AppLayout, SideNavigation, TopNavigation } from '@cloudscape-design/com
 import { GraphQlApiClient } from '../clients/GraphQlApiClient';
 import { HashRouter } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import PageRoute from './pageRouter';
 
 import "./globals.css";
 
@@ -43,7 +44,8 @@ export default function PageLayout() {
             }
             content={
               <div>
-                <p>{state}</p>
+                <PageRoute />
+                {state}
               </div>
             }
           />

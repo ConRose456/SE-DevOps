@@ -23,7 +23,7 @@ export class GraphQlApiClient {
             return result ?? {};
         })
         .catch((error) => console.log(error));
-
+        
         return response;
     }
 }
