@@ -1,13 +1,17 @@
 {
-  "name": "@con-rose/dev_ops",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@conrose456/dev_ops",
+  "version": "1.0.0",
   "files": [
     "out"
   ],
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "publish:github": "npm run build && npm publish",
     "start": "next start",
     "lint": "next lint"
   },
