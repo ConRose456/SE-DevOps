@@ -1,5 +1,12 @@
-import { Button, ContentLayout, Header, Link, Popover } from "@cloudscape-design/components";
 import React from "react";
+import { 
+    Button, 
+    ContentLayout, 
+    Header, 
+    Link, 
+    Popover 
+} from "@cloudscape-design/components";
+import { BookItemListView } from "../components/bookListComponent/bookItemListView";
 
 export const Home = () => {
     return (
@@ -35,7 +42,7 @@ export const Home = () => {
                     </Header>
                 }
             >
-
+                <BookItemListView />
             </ContentLayout>
         </div>
     )
