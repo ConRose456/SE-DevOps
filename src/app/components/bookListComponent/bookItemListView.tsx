@@ -43,6 +43,7 @@ export const BookItemListView = ({
             if (defaultsSet) {
                 setLoading(true);
                 await fetchDataCallback(
+                    searchQueryValue ?? "",
                     currentPage > 1 ? bookItems?.[bookItems?.length-1].cursor : undefined
                 )
                     .then((res: any) => { 

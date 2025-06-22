@@ -28,13 +28,17 @@ export const Home = () => {
     }, []);
 
     const fetchBooks = async (
-        cursor: string | undefined
+        titleText: string,
+        cursor?: string | undefined
     ) => 
         await graphqlClient.fetch(
             bookItemCardQuery,
             {
                 first: MAX_PAGE_SIZE,
                 ids: ["9780545069670", "9780545069671", "9780545069672"],
+                filter: {
+                    titleText,
+                },
                 after: cursor
             }
         ).catch((error) => console.log(error));
