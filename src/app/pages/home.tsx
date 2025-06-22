@@ -36,9 +36,7 @@ export const Home = () => {
             {
                 first: MAX_PAGE_SIZE,
                 ids: ["9780545069670", "9780545069671", "9780545069672"],
-                filter: {
-                    titleText,
-                },
+                titleTextFilter: titleText,
                 after: cursor
             }
         ).catch((error) => console.log(error));

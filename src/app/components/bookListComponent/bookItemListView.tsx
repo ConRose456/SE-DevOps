@@ -42,6 +42,7 @@ export const BookItemListView = ({
         (async () => {
             if (defaultsSet) {
                 setLoading(true);
+                console.log(searchQueryValue);
                 await fetchDataCallback(
                     searchQueryValue ?? "",
                     currentPage > 1 ? bookItems?.[bookItems?.length-1].cursor : undefined

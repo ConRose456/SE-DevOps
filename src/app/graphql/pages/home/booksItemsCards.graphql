@@ -1,7 +1,10 @@
-query ($ids: [String!]!, $first: Int!, $after: String){
+query ($ids: [String!]!, $first: Int!, $after: String, $titleTextFilter: String){
   books(
     first: $first
     after: $after
+    filter: {
+      titleText: $titleTextFilter
+    }
     ids: $ids 
   ) {
     total
