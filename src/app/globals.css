@@ -6,6 +6,47 @@ main {
   margin: 0;
 }
 
+.header {
+  padding-left: 3%;
+  padding-right: 3%
+}
+
+.search_input {
+  margin-left: 3%;
+  margin-right: 40%;
+}
+
+.item_card {
+  width: 100%;
+  display: flex;
+}
+
+.empty_list {
+  padding-top: 3%;
+}
+
+.user_table {
+  padding-left: 3%;
+}
+
+.search_display {
+  padding-left: 3%;
+  padding-top: 2%;
+}
+
+.search_text {
+  color: darkblue;
+}
+
+.items_grid {
+  padding-left: 3%;
+  padding-top: 1%;
+}
+
 .pagination {
-  padding-left: 48%;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  margin-bottom: 1%;
 }

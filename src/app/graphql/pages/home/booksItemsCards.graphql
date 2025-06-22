@@ -1,0 +1,19 @@
+query ($ids: [String!]!, $first: Int!, $after: String){
+  books(
+    first: $first
+    after: $after
+    ids: $ids 
+  ) {
+    total
+    hasNext
+    edges {
+      cursor
+      node {
+        id
+        title
+        authors
+        description
+      }
+    }
+  }
+}

@@ -11,7 +11,7 @@ import Image from "next/image";
 const DEFAULT_BOOK_IMAGE_PATH = "/images/bookImage.jpg"
 
 export const ItemCard = ({ item }: { item: any }) => {
-    console.log(item);
+    const node = item.node;
     return (
         <div>
             <Container
@@ -52,13 +52,13 @@ export const ItemCard = ({ item }: { item: any }) => {
                     <SpaceBetween direction="vertical" size="xxs">
                         <Box variant="h2">
                             <Link fontSize="heading-m" href="#">
-                                {"Harry Potter"}
+                                {node.title}
                             </Link>
                         </Box>
-                        <Box variant="p">Author: {"JK Rowling"}</Box>
+                        <Box variant="p">Author: {...node.authors}</Box>
                     </SpaceBetween>
                     <Box variant="small" >
-                        {("Test description").slice(0, 130) + '...'}
+                        {node.description.slice(0, 130) + '...'}
                     </Box>
                 </SpaceBetween>
             </Container>

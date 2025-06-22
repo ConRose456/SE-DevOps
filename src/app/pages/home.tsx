@@ -1,14 +1,44 @@
-import React from "react";
-import { 
-    Button, 
-    ContentLayout, 
-    Header, 
-    Link, 
-    Popover 
+import React, { useEffect, useState } from "react";
+import {
+    Button,
+    ContentLayout,
+    Header,
+    Input,
+    Link,
+    Popover,
 } from "@cloudscape-design/components";
-import { BookItemListView } from "../components/bookListComponent/bookItemListView";
+import { BookItemListView, getDefaultSearchValue, MAX_PAGE_SIZE } from "../components/bookListComponent/bookItemListView";
+import { GraphQlApiClient } from "@/clients/GraphQlApiClient";
+import { SearchDisplay } from "../components/searchDisplay";
+
+import bookItemCardQuery from "../graphql/pages/home/booksItemsCards.graphql";
+
+const graphqlClient = new GraphQlApiClient();
 
 export const Home = () => {
+    const [defaultsSet, setDefaultsSet] = useState(false);
+
+    const [searchInputValue, setSearchInputValue] = useState("");
+    const [searchQueryValue, setSearchQueryValue] = useState("");
+
+    useEffect(() => {
+        setSearchInputValue(getDefaultSearchValue() ?? "");
+        setSearchQueryValue(getDefaultSearchValue() ?? "");
+        setDefaultsSet(true);
+    }, []);
+
+    const fetchBooks = async (
+        cursor: string | undefined
+    ) => 
+        await graphqlClient.fetch(
+            bookItemCardQuery,
+            {
+                first: MAX_PAGE_SIZE,
+                ids: ["9780545069670", "9780545069671", "9780545069672"],
+                after: cursor
+            }
+        ).catch((error) => console.log(error));
+
     return (
         <div>
             <ContentLayout
@@ -42,7 +72,25 @@ export const Home = () => {
                     </Header>
                 }
             >
-                <BookItemListView />
+                <Input
+                    onChange={({ detail }) => setSearchInputValue(detail.value)}
+                    value={searchInputValue}
+                    onKeyDown={({ detail }) => {
+                        if (detail.key == "Enter") {
+                            setSearchQueryValue(searchInputValue);
+                        }
+                    }}
+                    placeholder="Search"
+                    type="search"
+                    className='search_input'
+                />
+                <SearchDisplay searchQueryValue={searchQueryValue} />
+                <BookItemListView 
+                    fetchDataCallback={fetchBooks}
+                    defaultsSet={defaultsSet}
+                    emptyMessage="Sorry we have no book in our library at this time." 
+                    searchQueryValue={searchQueryValue}                          
+                />
             </ContentLayout>
         </div>
     )
