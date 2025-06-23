@@ -2,6 +2,7 @@ import React from 'react';
 import { GraphQlApiClient } from '@/clients/GraphQlApiClient';
 
 import isAuthed from "../graphql/pages/auth/isAuthed.graphql";
+import signOut from "../graphql/pages/auth/signout.graphql";
 import userDisplayText from "../graphql/pages/auth/userDisplayText.graphql";
 
 export const AuthTokenStateContext = React.createContext(
@@ -14,6 +15,16 @@ export const AuthTokenStateContext = React.createContext(
 const graphqlClient = new GraphQlApiClient();
 
 export class AuthTokenStateController {
+    public static signOut = async () => {
+        await graphqlClient.fetch(
+            signOut
+        ).then((res) => {
+            if (!res.data?.signOut?.success) {
+                console.log("[Sign Out Failed]");
+            }
+        })
+    }
+
     public static isAuthorized = async () =>
         await graphqlClient.fetch(
             isAuthed

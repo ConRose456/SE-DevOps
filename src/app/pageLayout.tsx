@@ -80,10 +80,12 @@ export default function PageLayout() {
                 } else if (detail.id == "sign_up") {
                   setShouldSignUp(true);
                 } else if (detail.id == "sign_out") {
-                  userDisplayTextUseState.setUserDisplayText("");
-                  authTokenStateController.setIsAuthorised(false);
-                  window.history.replaceState({}, "", `${window.location.origin}`)
-                  window.location.reload();
+                  AuthTokenStateController.signOut().then(() => {
+                    userDisplayTextUseState.setUserDisplayText("");
+                    authTokenStateController.setIsAuthorised(false);
+                    window.history.replaceState({}, "", `${window.location.origin}`)
+                    window.location.reload();
+                  });
                 }
               }
             },
