@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { AppLayout, SideNavigation, TopNavigation } from '@cloudscape-design/components';
 import { HashRouter } from 'react-router-dom';
 import PageRoute from './pageRouter';
@@ -8,14 +8,48 @@ import { SignUpContext } from './controllers/SignUpController';
 
 import "./globals.css";
 import { SignInModal } from './components/signInComponent/signInModal';
+import { AuthTokenStateContext, AuthTokenStateController } from './controllers/AuthTokenStateController';
 
 export default function PageLayout() {
+  const { authTokenStateController, userDisplayTextUseState } = useContext(AuthTokenStateContext);
   const { shouldSignUp, setShouldSignUp } = React.useContext(SignUpContext);
 
   const [isSignInVisible, setSignInVisible] = React.useState(false);
 
+  // Ensures UX update on auth change and intital load
+  useEffect(() => {
+    (async () => {
+      await AuthTokenStateController.isAuthorized()
+        .then(({ isValid }) =>  {
+          if (authTokenStateController.isAuthorized != isValid) {
+              authTokenStateController.setIsAuthorised(isValid);
+          }
+        })
+      userDisplayTextUseState.setUserDisplayText(
+        authTokenStateController.isAuthorized 
+          ? await AuthTokenStateController.getUserDisplayText()
+          : ""
+      ); 
+    })()
+  }, [authTokenStateController.isAuthorized]);
+
+  // This updates UI on user auth token timeout
+  useEffect(() => {
+    const checkAuthed = () => {
+      if (!AuthTokenStateController.isAuthorized()) {
+        authTokenStateController.setIsAuthorised(false);
+        userDisplayTextUseState.setUserDisplayText("");
+        window.location.reload();
+      }
+    }
+
+    // Calls checkAuth every hour
+    const interval = setInterval(checkAuthed, 3600000);
+    return () => clearInterval(interval);
+  }, []);
+
   const getLoginUtilsItems = (): InternalItemOrGroup[] => {
-        if (Math.random() == Math.random()) { // check if authed
+        if (authTokenStateController.isAuthorized) { // check if authed
             return [
                 { itemType: "action", text: "Sign Out", id: "sign_out" },
             ];
@@ -46,9 +80,8 @@ export default function PageLayout() {
                 } else if (detail.id == "sign_up") {
                   setShouldSignUp(true);
                 } else if (detail.id == "sign_out") {
-                  // userDisplayTextUseState.setUserDisplayText("");
-                  // AuthTokenStateController.deleteAuthToken();
-                  // authTokenStateController.setIsAuthorised(false);
+                  userDisplayTextUseState.setUserDisplayText("");
+                  authTokenStateController.setIsAuthorised(false);
                   window.history.replaceState({}, "", `${window.location.origin}`)
                   window.location.reload();
                 }

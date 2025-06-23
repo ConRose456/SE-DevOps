@@ -1,0 +1,9 @@
+query {
+  auth {
+    validity {
+      isValid
+      expireDate
+      isAdmin
+    }
+  }
+}

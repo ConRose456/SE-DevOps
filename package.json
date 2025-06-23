@@ -1,6 +1,6 @@
 {
   "name": "@conrose456/devops",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "files": [
     "out"
   ],
@@ -30,6 +30,7 @@
     "eslint-config-next": "15.3.3",
     "graphql": "^16.11.0",
     "graphql-tag": "^2.12.6",
+    "jwt-decode": "^4.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.2",

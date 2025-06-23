@@ -1,3 +1,4 @@
+import { AuthTokenStateContext, AuthTokenStateController } from "../../controllers/AuthTokenStateController";
 import { 
     Box, 
     Button, 
@@ -9,8 +10,13 @@ import {
     Popover, 
     SpaceBetween
 } from "@cloudscape-design/components";
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import { useEffect } from "react";
+import { GraphQlApiClient } from "@/clients/GraphQlApiClient";
+
+import signInMutation from "../../graphql/pages/auth/signIn.graphql";
+
+const graphqlClient = new GraphQlApiClient();
 
 export const SignInModal = (
     {
@@ -23,6 +29,8 @@ export const SignInModal = (
         setSignUpVisible: (value: boolean) => any,
     }
 ) => {
+    const { authTokenStateController } = useContext(AuthTokenStateContext);
+
     const [loading, setLoading] = useState(false);
 
     const [enteredUsername, setEnteredUsername] = useState("");
@@ -55,9 +63,22 @@ export const SignInModal = (
                             disabled={loading}
                             onClick={async () => {
                                 setLoading(true);
-                                
-                                console.log("Logining in");
+                                await graphqlClient.fetch(
+                                    signInMutation,
+                                    {
+                                        username: enteredUsername,
+                                        password: enteredPassword
+                                    }
+                                ).then(async () => {
+                                    await AuthTokenStateController.isAuthorized()
+                                        .then(({ isValid }) => 
+                                            authTokenStateController.setIsAuthorised(isValid)
+                                        )
+                                    window.location.reload()
+                                });
+
                                 setLoading(false);
+                                setVisible(false);
                             }}>Login</Button>
                     </SpaceBetween>
                 </Box>
