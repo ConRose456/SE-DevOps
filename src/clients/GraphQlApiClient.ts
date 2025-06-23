@@ -5,7 +5,7 @@ const API_GATEWAY_ENDPOINT = "https://k4iq4bzva9.execute-api.eu-west-2.amazonaws
 export class GraphQlApiClient {
     public fetch = async (query: DocumentNode, variables?: object) => {
         const printedQuery = print(query);
-        return await fetch(API_GATEWAY_ENDPOINT ?? "http://localhost:4000/graphql", {
+        return await fetch(process.env.LOCAL_ENDPOINT ?? API_GATEWAY_ENDPOINT, {
             method: 'POST',
             credentials: 'include',
             headers: {

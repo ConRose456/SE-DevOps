@@ -29,7 +29,7 @@ export class AuthTokenStateController {
         await graphqlClient.fetch(
             isAuthed
         ).then((res) => {
-            if (res.data) {
+            if (res?.data) {
                 return res.data.auth.validity;
             }
             return {isValid: false};

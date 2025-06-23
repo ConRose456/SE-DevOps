@@ -72,7 +72,7 @@ export default function PageLayout() {
             {
               type: "menu-dropdown",
               iconName: "user-profile",
-              text: "Test-User",
+              text: userDisplayTextUseState.userDisplayText,
               items: getLoginUtilsItems(),
               onItemClick: ({ detail }) => {
                 if (detail.id == "sign_in") {
