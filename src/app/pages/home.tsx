@@ -41,12 +41,11 @@ export const Home = () => {
             bookItemCardQuery,
             {
                 first: MAX_PAGE_SIZE,
-                ids: ["9780545069670", "9780545069671", "9780545069672"],
                 titleTextFilter: titleText,
                 after: cursor
             }
         )
-        .then((res) => res?.data?.books ?? { total: 0, edges: [], hasNext: false })
+        .then((res) => res?.data?.home?.books ?? { total: 0, edges: [], hasNext: false })
         .catch((error) => console.log(error));
 
     return (

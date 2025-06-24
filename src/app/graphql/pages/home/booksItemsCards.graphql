@@ -1,21 +1,22 @@
-query ($ids: [String!]!, $first: Int!, $after: String, $titleTextFilter: String){
-  books(
-    first: $first
-    after: $after
-    filter: {
-      titleText: $titleTextFilter
-    }
-    ids: $ids 
-  ) {
-    total
-    hasNext
-    edges {
-      cursor
-      node {
-        id
-        title
-        authors
-        description
+query($first: Int!, $after: String, $titleTextFilter: String) {
+  home {
+    books(
+      first: $first
+      after: $after
+      filter: {
+        titleText: $titleTextFilter
+      }
+    ) {
+      total
+      hasNext
+      edges {
+        cursor
+        node {
+          id
+          title
+          authors
+          description
+        }
       }
     }
   }
