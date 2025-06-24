@@ -13,6 +13,7 @@ import { SignUpContext } from "../../controllers/SignUpController";
 import { GraphQlApiClient } from "../../../clients/GraphQlApiClient";
 
 import addUserBook from "../../graphql/pages/userBooks/addUserBook.graphql";
+import { RemoveOwnedBookModal } from "../ownedBookComponent/removeOwnedBook";
 
 const DEFAULT_BOOK_IMAGE_PATH = "/images/bookImage.jpg"
 
@@ -32,8 +33,6 @@ export const ItemCard = ({
     const [addModalVisible, setAddModalVisible] = React.useState(false);
     const [addModalMessage, setAddModalMessage] = React.useState("");
     const [bookAdded, setBookAdded] = React.useState(false);
-
-    console.log(removeModalVisible);
 
     const [loading, setLoading] = React.useState(false);
     return (
@@ -75,7 +74,6 @@ export const ItemCard = ({
                                                 if (!res?.isValid) {
                                                     setShouldSignUp(true);
                                                 } else {
-                                                    // check if the user owns the book
                                                     await graphqlClient.fetch(
                                                         addUserBook,
                                                         { addToOwnedBooksId: node.id }
@@ -87,7 +85,7 @@ export const ItemCard = ({
                                                             setAddModalMessage("Something went wrong, failed to add book to yout collect.");
                                                         }
                                                     })
-                                                    .catch((error) => console.log(`[Error] - Ops something whent wrong: ${error}`))
+                                                    .catch((error) => console.log(`[Error] - Oops something whent wrong: ${error}`))
                                                 }
                                             })
                                             .catch((error) => {
@@ -112,12 +110,14 @@ export const ItemCard = ({
                     setVisible={setAddModalVisible}
                     message={addModalMessage}
                 />
-                {/* <RemoveOwnedBookModal
+                <RemoveOwnedBookModal
+                    id={node.id}
+                    title={node.title}
                     visible={removeModalVisible}
                     setVisible={setRemoveModalVisible}
                     loading={loading}
                     setLoading={setLoading}
-                /> */}
+                />
                 <SpaceBetween direction="vertical" size="xxs">
                     <SpaceBetween direction="vertical" size="xxs">
                         <Box variant="h2">
