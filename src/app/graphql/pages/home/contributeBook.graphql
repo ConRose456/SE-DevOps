@@ -1,0 +1,16 @@
+mutation(
+  $id: String!, 
+  $title: String!, 
+  $authors: [String!]!, 
+  $description: String!
+) {
+  contributeBook(
+    id: $id, 
+    title: $title, 
+    authors: $authors, 
+    description: $description
+  ) {
+    alreadyExists
+    success
+  }
+}

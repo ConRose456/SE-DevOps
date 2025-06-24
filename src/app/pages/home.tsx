@@ -12,14 +12,20 @@ import { GraphQlApiClient } from "@/clients/GraphQlApiClient";
 import { SearchDisplay } from "../components/searchDisplay";
 
 import bookItemCardQuery from "../graphql/pages/home/booksItemsCards.graphql";
+import { ContributeBookModal } from "../components/contributeBookComponent/bookContributionModal";
+import { mustSignIn } from "../components/isSingedInComponent";
 
 const graphqlClient = new GraphQlApiClient();
+
+const SignInProtectedContirbution = mustSignIn(ContributeBookModal);
 
 export const Home = () => {
     const [defaultsSet, setDefaultsSet] = useState(false);
 
     const [searchInputValue, setSearchInputValue] = useState("");
     const [searchQueryValue, setSearchQueryValue] = useState("");
+
+    const [contributionModalVisible, setContributionModalVisible] = useState(false);
 
     useEffect(() => {
         setSearchInputValue(getDefaultSearchValue() ?? "");
@@ -65,7 +71,7 @@ export const Home = () => {
                             <Button
                                 variant="primary"
                                 onClick={() => {
-                                    console.log("Open Contribution Modal");
+                                    setContributionModalVisible(true);
                                 }}
                             >
                                 Contribute Book
@@ -76,6 +82,11 @@ export const Home = () => {
                     </Header>
                 }
             >
+                {
+                contributionModalVisible 
+                    ? <SignInProtectedContirbution visible={contributionModalVisible} setVisible={setContributionModalVisible} />
+                    : <div />
+                }
                 <Input
                     onChange={({ detail }) => setSearchInputValue(detail.value)}
                     value={searchInputValue}
