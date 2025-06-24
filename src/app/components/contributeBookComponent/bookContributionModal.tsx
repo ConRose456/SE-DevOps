@@ -18,9 +18,9 @@ export const ContributeBookModal = (
         setVisible: (value: boolean) => void,
         isEdit?: boolean
         editData?: {
-            isbn: string,
+            id: string,
             title: string,
-            author: string,
+            authors: string,
             description: string
         }
     }
@@ -39,9 +39,9 @@ export const ContributeBookModal = (
 
     useEffect(() => {
         if (isEdit) {
-            setIsbn(editData?.isbn ?? "");
+            setIsbn(editData?.id ?? "");
             setTitle(editData?.title ?? "");
-            setAuthors(editData?.author ?? "");
+            setAuthors(editData?.authors ?? "");
             setDescription(editData?.description ?? "");
         }
     }, []);
@@ -63,7 +63,10 @@ export const ContributeBookModal = (
             window.location.reload();
             setVisible(false);
         } else {
-            setErrorMessage(response.message ?? "Uknown error");
+            setErrorMessage(
+                response.alreadyExists ? 
+                    "A book with this ISBN has already been contributed."
+                    : response.message ?? "Uknown error");
             setErrorModalVisible(true);
         }
     }
@@ -92,7 +95,8 @@ export const ContributeBookModal = (
                                         id: isbn,
                                         title,
                                         authors,
-                                        description
+                                        description,
+                                        isEdit
                                     }
 
                                     const isValidBook = validateBookInputs(bookData);
@@ -107,7 +111,8 @@ export const ContributeBookModal = (
                                                 ...response,
                                                 message: "Failed to contribute book."
                                             });
-                                        });
+                                        })
+                                        .catch((error) => onReponse({ message: error }));
                                     } else {
                                         setLoading(false);
                                     }

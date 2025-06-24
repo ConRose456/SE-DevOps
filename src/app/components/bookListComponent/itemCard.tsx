@@ -14,6 +14,7 @@ import { GraphQlApiClient } from "../../../clients/GraphQlApiClient";
 
 import addUserBook from "../../graphql/pages/userBooks/addUserBook.graphql";
 import { RemoveOwnedBookModal } from "../ownedBookComponent/removeOwnedBook";
+import { ContributeBookModal } from "../contributeBookComponent/bookContributionModal";
 
 const DEFAULT_BOOK_IMAGE_PATH = "/images/bookImage.jpg"
 
@@ -28,6 +29,8 @@ export const ItemCard = ({
 }) => {
     const node = item.node;
     const { setShouldSignUp } = React.useContext(SignUpContext);
+
+    const [contributionModalVisible, setContributionModalVisible] = React.useState(false);
 
     const [removeModalVisible, setRemoveModalVisible] = React.useState(false);
     const [addModalVisible, setAddModalVisible] = React.useState(false);
@@ -57,7 +60,7 @@ export const ItemCard = ({
                             <Button
                                 variant="normal"
                                 onClick={() => {
-                                    console.log("edit")
+                                    setContributionModalVisible(true)
                                 }}
                             >
                                 Edit
@@ -105,6 +108,12 @@ export const ItemCard = ({
                     </Box>
                 }
             >
+                <ContributeBookModal 
+                    visible={contributionModalVisible} 
+                    setVisible={setContributionModalVisible} 
+                    isEdit={true}
+                    editData={{ ...node, authors: node?.authors?.join(", ") ?? "" }}
+                />
                 <UserOwnsBookModal
                     visible={addModalVisible}
                     setVisible={setAddModalVisible}
@@ -125,7 +134,7 @@ export const ItemCard = ({
                                 {node.title}
                             </Link>
                         </Box>
-                        <Box variant="p">Author: {...node.authors}</Box>
+                        <Box variant="p">Author: {joinWithOptionalTruncation(node.authors, 10)}</Box>
                     </SpaceBetween>
                     <Box variant="small" >
                         {node.description.slice(0, 130) + '...'}
@@ -134,4 +143,17 @@ export const ItemCard = ({
             </Container>
         </div>
     );
+}
+
+function joinWithOptionalTruncation(items: string[], truncateLastTo: number = 3): string {
+  if (items.length === 0) return "";
+
+  const lastOriginal = items[items.length - 1];
+  const truncatedLast = lastOriginal.slice(0, truncateLastTo);
+
+  const shortened = truncatedLast.length < lastOriginal.length;
+  const resultArray = [...items.slice(0, -1), truncatedLast];
+  const result = resultArray.join(", ") + (shortened ? "..." : "");
+
+  return result;
 }

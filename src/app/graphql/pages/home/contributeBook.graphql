@@ -2,13 +2,15 @@ mutation(
   $id: String!, 
   $title: String!, 
   $authors: [String!]!, 
-  $description: String!
+  $description: String!,
+  $isEdit: Boolean
 ) {
   contributeBook(
     id: $id, 
     title: $title, 
     authors: $authors, 
     description: $description
+    isEdit: $isEdit
   ) {
     alreadyExists
     success
