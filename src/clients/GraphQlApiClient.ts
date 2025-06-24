@@ -5,7 +5,7 @@ const API_GATEWAY_ENDPOINT = `/graphql`;
 export class GraphQlApiClient {
     public fetch = async (query: DocumentNode, variables?: object) => {
         const printedQuery = print(query);
-        return await fetch(`${window.location.origin}${API_GATEWAY_ENDPOINT}`, {
+        return await fetch(API_GATEWAY_ENDPOINT, {
             method: 'POST',
             credentials: 'include',
             headers: {

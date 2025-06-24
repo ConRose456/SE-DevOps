@@ -34,8 +34,8 @@ export const ItemCardGrid = ({items}: {items: any[] | undefined}) => {
                 gridDefinition={gridDefinition}
             >
                 {items?.map(
-                    (item) => (
-                        <div key={`item_card_div_${item}`}>
+                    (item, i) => (
+                        <div key={`item_card_grid_${i}`}>
                             <ItemCard item={item}/>
                         </div>
                     )

@@ -1,0 +1,7 @@
+mutation($addToOwnedBooksId: String!) {
+  userOwned {
+    addToOwnedBooks(id: $addToOwnedBooksId) {
+      success
+    }
+  }
+}

@@ -1,17 +1,40 @@
 import React from "react";
-import { 
-    Box, 
-    Button, 
-    Container, 
-    Link, 
-    SpaceBetween 
+import {
+    Box,
+    Button,
+    Container,
+    Link,
+    SpaceBetween
 } from "@cloudscape-design/components";
 import Image from "next/image";
+import { UserOwnsBookModal } from "../ownedBookComponent/userOwnsBookModal";
+import { RemoveOwnedBookModal } from "../ownedBookComponent/removeOwnedBook";
+import { AuthTokenStateController } from "@/app/controllers/AuthTokenStateController";
+import { SignUpContext } from "@/app/controllers/SignUpController";
+import { GraphQlApiClient } from "@/clients/GraphQlApiClient";
+
+import addUserBook from "../../graphql/pages/userBooks/addUserBook.graphql";
 
 const DEFAULT_BOOK_IMAGE_PATH = "/images/bookImage.jpg"
 
-export const ItemCard = ({ item }: { item: any }) => {
+const graphqlClient = new GraphQlApiClient();
+
+export const ItemCard = ({
+    item,
+    userOwned
+  }: {
+    item: any;
+    userOwned?: boolean
+}) => {
     const node = item.node;
+    const { setShouldSignUp } = React.useContext(SignUpContext);
+
+    const [removeModalVisible, setRemoveModalVisible] = React.useState(false);
+    const [addModalVisible, setAddModalVisible] = React.useState(false);
+    const [addModalMessage, setAddModalMessage] = React.useState("");
+    const [bookAdded, setBookAdded] = React.useState(false);
+
+    const [loading, setLoading] = React.useState(false);
     return (
         <div>
             <Container
@@ -39,15 +62,61 @@ export const ItemCard = ({ item }: { item: any }) => {
                             >
                                 Edit
                             </Button>
-                            <Button
-                                variant={"primary"}
-                                onClick={() => {console.log("Add to owned")}}
-                                >Add to Owned
-                            </Button>
+                            {!userOwned ?
+                                <Button
+                                    loading={loading}
+                                    disabled={bookAdded}
+                                    variant={"primary"}
+                                    onClick={async () => {
+                                        setLoading(true);
+                                        await AuthTokenStateController.isAuthorized()
+                                            .then(async ({ isValid }) => {
+                                                if (!isValid) {
+                                                    setShouldSignUp(true);
+                                                } else {
+                                                    // check if the user owns the book
+                                                    await graphqlClient.fetch(
+                                                        addUserBook,
+                                                        { addToOwnedBooksId: node.id }
+                                                    ).then((res) => {
+                                                        if (res?.data?.userOwned?.addToOwnedBooks?.success) {
+                                                            setAddModalMessage("Successfully Added book!");
+                                                        } else {
+                                                            setAddModalMessage("Something went wrong, failed to add book to yout collect.");
+                                                        }
+                                                    })
+                                                    .catch((error) => console.log(`[Error] - Ops something whent wrong: ${error}`))
+                                                    .finally(() => setBookAdded(true));
+                                                }
+                                            })
+                                            .catch((error) => {
+                                                console.log(error);
+                                            });
+                                        setLoading(false);
+                                    }}
+                                >{bookAdded ? "Book Added" : "Add to Owned"}</Button>
+                                : <Button
+                                    variant="primary"
+                                    onClick={async () => {
+                                        setRemoveModalVisible(true);
+                                    }}
+                                >Remove Book</Button>
+                            }
                         </SpaceBetween>
                     </Box>
                 }
             >
+                <UserOwnsBookModal
+                    visible={addModalVisible}
+                    setVisible={setAddModalVisible}
+                    message={addModalMessage}
+                />
+                <RemoveOwnedBookModal
+                    visible={removeModalVisible}
+                    setVisible={setRemoveModalVisible}
+                    loading={loading}
+                    setLoading={setLoading}
+                />
                 <SpaceBetween direction="vertical" size="xxs">
                     <SpaceBetween direction="vertical" size="xxs">
                         <Box variant="h2">
