@@ -33,6 +33,8 @@ export const ItemCard = ({
     const [addModalMessage, setAddModalMessage] = React.useState("");
     const [bookAdded, setBookAdded] = React.useState(false);
 
+    console.log(removeModalVisible);
+
     const [loading, setLoading] = React.useState(false);
     return (
         <div>
