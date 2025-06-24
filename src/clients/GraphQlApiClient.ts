@@ -1,11 +1,11 @@
 import { DocumentNode, print } from 'graphql';
 
-const API_GATEWAY_ENDPOINT = "https://k4iq4bzva9.execute-api.eu-west-2.amazonaws.com/graphql";
+const API_GATEWAY_ENDPOINT = `/graphql`;
 
 export class GraphQlApiClient {
     public fetch = async (query: DocumentNode, variables?: object) => {
         const printedQuery = print(query);
-        return await fetch(process.env.LOCAL_ENDPOINT ?? API_GATEWAY_ENDPOINT, {
+        return await fetch(`${window.location.origin}${API_GATEWAY_ENDPOINT}`, {
             method: 'POST',
             credentials: 'include',
             headers: {

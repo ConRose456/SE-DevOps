@@ -22,21 +22,24 @@ export default function PageLayout() {
       await AuthTokenStateController.isAuthorized()
         .then(({ isValid }) =>  {
           if (authTokenStateController.isAuthorized != isValid) {
-              authTokenStateController.setIsAuthorised(isValid);
+            authTokenStateController.setIsAuthorised(isValid);
+            if(!isValid) {
+              AuthTokenStateController.signOut()
+            }
           }
         })
       userDisplayTextUseState.setUserDisplayText(
         authTokenStateController.isAuthorized 
           ? await AuthTokenStateController.getUserDisplayText()
           : ""
-      ); 
+      );
     })()
   }, [authTokenStateController.isAuthorized]);
 
   // This updates UI on user auth token timeout
   useEffect(() => {
     const checkAuthed = () => {
-      if (!AuthTokenStateController.isAuthorized()) {
+      if (!authTokenStateController.isAuthorized()) {
         authTokenStateController.setIsAuthorised(false);
         userDisplayTextUseState.setUserDisplayText("");
         window.location.reload();
