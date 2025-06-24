@@ -16,7 +16,6 @@ export const mustSignIn = (WrappedComponent: any) => {
                         if (res?.isValid) {
                             setLoading(false);
                         } else { 
-                            console.log("Foo");
                             setShouldSignUp(true);
                         }
                     });

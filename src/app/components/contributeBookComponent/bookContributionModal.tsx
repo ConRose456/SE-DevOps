@@ -46,7 +46,6 @@ export const ContributeBookModal = (
         }
     }, []);
 
-    // Ensure user is Authed
     useEffect(() => {
         if (!isEdit) {
             setIsbn("");
@@ -83,10 +82,10 @@ export const ContributeBookModal = (
                     <Box float="right">
                         <SpaceBetween direction="horizontal" size="xs">
                             <Button onClick={() => setVisible(false)}>Cancel</Button>
-                            <Button 
+                            <Button
                                 loading={loading}
                                 variant="primary"
-                                onClick={async() => {
+                                onClick={async () => {
                                     setLoading(true);
 
                                     const bookData = {
@@ -96,15 +95,14 @@ export const ContributeBookModal = (
                                         description
                                     }
 
-                                    setInvalidInputs(validateBookInputs(bookData));
-                                    console.log(JSON.stringify(invalidInputs));
-                                    if (invalidInputs?.length) {
+                                    const isValidBook = validateBookInputs(bookData);
+                                    setInvalidInputs(isValidBook);
+                                    if (!isValidBook?.length) {
                                         await graphqlClient.fetch(
                                             contributeBook,
                                             { ...bookData, authors: authors.split(",") }
                                         ).then((res) => { 
                                             const response = res?.data?.contributeBook;
-                                            console.log(JSON.stringify(response, null, 2));
                                             onReponse({
                                                 ...response,
                                                 message: "Failed to contribute book."
