@@ -8,10 +8,9 @@ import {
 } from "@cloudscape-design/components";
 import Image from "next/image";
 import { UserOwnsBookModal } from "../ownedBookComponent/userOwnsBookModal";
-import { RemoveOwnedBookModal } from "../ownedBookComponent/removeOwnedBook";
-import { AuthTokenStateController } from "@/app/controllers/AuthTokenStateController";
-import { SignUpContext } from "@/app/controllers/SignUpController";
-import { GraphQlApiClient } from "@/clients/GraphQlApiClient";
+import { AuthTokenStateController } from "../../controllers/AuthTokenStateController";
+import { SignUpContext } from "../../controllers/SignUpController";
+import { GraphQlApiClient } from "../../../clients/GraphQlApiClient";
 
 import addUserBook from "../../graphql/pages/userBooks/addUserBook.graphql";
 
@@ -81,12 +80,12 @@ export const ItemCard = ({
                                                     ).then((res) => {
                                                         if (res?.data?.userOwned?.addToOwnedBooks?.success) {
                                                             setAddModalMessage("Successfully Added book!");
+                                                            setBookAdded(true)
                                                         } else {
                                                             setAddModalMessage("Something went wrong, failed to add book to yout collect.");
                                                         }
                                                     })
                                                     .catch((error) => console.log(`[Error] - Ops something whent wrong: ${error}`))
-                                                    .finally(() => setBookAdded(true));
                                                 }
                                             })
                                             .catch((error) => {
@@ -111,12 +110,12 @@ export const ItemCard = ({
                     setVisible={setAddModalVisible}
                     message={addModalMessage}
                 />
-                <RemoveOwnedBookModal
+                {/* <RemoveOwnedBookModal
                     visible={removeModalVisible}
                     setVisible={setRemoveModalVisible}
                     loading={loading}
                     setLoading={setLoading}
-                />
+                /> */}
                 <SpaceBetween direction="vertical" size="xxs">
                     <SpaceBetween direction="vertical" size="xxs">
                         <Box variant="h2">
