@@ -71,8 +71,8 @@ export const ItemCard = ({
                                     onClick={async () => {
                                         setLoading(true);
                                         await AuthTokenStateController.isAuthorized()
-                                            .then(async ({ isValid }) => {
-                                                if (!isValid) {
+                                            .then(async (res) => {
+                                                if (!res?.isValid) {
                                                     setShouldSignUp(true);
                                                 } else {
                                                     // check if the user owns the book

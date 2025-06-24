@@ -1,25 +1,27 @@
-import React, { useEffect, useState } from "react";
-import {
-    Button,
-    ContentLayout,
-    Header,
-    Input,
-    Link,
-    Popover,
-} from "@cloudscape-design/components";
+import React, { useEffect } from "react";
+import { useState } from "react";
 import { BookItemListView, getDefaultSearchValue, MAX_PAGE_SIZE } from "../components/bookListComponent/bookItemListView";
-import { GraphQlApiClient } from "@/clients/GraphQlApiClient";
+import { ContentLayout, Header, Input, Link } from "@cloudscape-design/components";
 import { SearchDisplay } from "../components/searchDisplay";
-
-import bookItemCardQuery from "../graphql/pages/home/booksItemsCards.graphql";
+import getOwnedBooks from "../graphql/pages/userBooks/getUserBooks.graphql";
+import { GraphQlApiClient } from "@/clients/GraphQlApiClient";
 
 const graphqlClient = new GraphQlApiClient();
 
-export const Home = () => {
+export const OwnedBooks = () => {
     const [defaultsSet, setDefaultsSet] = useState(false);
 
     const [searchInputValue, setSearchInputValue] = useState("");
     const [searchQueryValue, setSearchQueryValue] = useState("");
+
+    // Clears URL args on page change
+    useEffect(() => {
+        window.history.pushState(
+            {},
+            "",
+            `${window.location.origin}#/owned_books`,
+        );
+    });
 
     useEffect(() => {
         setSearchInputValue(getDefaultSearchValue() ?? "");
@@ -29,19 +31,22 @@ export const Home = () => {
 
     const fetchBooks = async (
         titleText: string,
-        cursor?: string | undefined
-    ) => 
-        await graphqlClient.fetch(
-            bookItemCardQuery,
+        cursor: string,
+    ) => {
+       return await graphqlClient.fetch(
+            getOwnedBooks,
             {
                 first: MAX_PAGE_SIZE,
-                ids: ["9780545069670", "9780545069671", "9780545069672"],
                 titleTextFilter: titleText,
                 after: cursor
             }
         )
-        .then((res) => res?.data?.books ?? { total: 0, edges: [], hasNext: false })
+        .then((res) => 
+            res.data?.ownedBooks?.books 
+                ?? { total: 0, edges: [], hasNext: false}
+        )
         .catch((error) => console.log(error));
+    }
 
     return (
         <div>
@@ -52,27 +57,10 @@ export const Home = () => {
                     <Header
                         className='header'
                         variant="h1"
-                        info={
-                            <Popover
-                                header="Global Book Library"
-                                content="Welcome! You can view our global collection of books all from right here. Search or browse for you favourite books and add them to your collection."
-                            >
-                                <Link variant="info">Info</Link>
-                            </Popover>
-                        }
-                        description="Search or browse for you favourite books and add them to your collection."
-                        actions={
-                            <Button
-                                variant="primary"
-                                onClick={() => {
-                                    console.log("Open Contribution Modal");
-                                }}
-                            >
-                                Contribute Book
-                            </Button>
-                        }
+                        info={<Link variant="info">Info</Link>}
+                        description="Search the books you own!"
                     >
-                        Global Book Library
+                        Owned Books
                     </Header>
                 }
             >
@@ -92,11 +80,11 @@ export const Home = () => {
                 <BookItemListView 
                     fetchDataCallback={fetchBooks}
                     defaultsSet={defaultsSet}
-                    emptyMessage="Sorry we have no book in our library at this time." 
+                    emptyMessage="Sorry you have no book in your library at this time." 
                     searchQueryValue={searchQueryValue}  
-                    userOwned={false}                        
+                    userOwned={true}
                 />
             </ContentLayout>
         </div>
-    )
+    );
 }

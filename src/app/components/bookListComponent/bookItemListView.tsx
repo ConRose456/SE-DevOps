@@ -19,13 +19,15 @@ export const BookItemListView = ({
     emptyMessage,
     fetchDataCallback,
     defaultsSet,
-    pageUrl
+    pageUrl,
+    userOwned
 }: { 
     searchQueryValue: string,
     emptyMessage: string
     fetchDataCallback: (...args: any) => any
     defaultsSet: boolean,
-    pageUrl?: string
+    pageUrl?: string,
+    userOwned: boolean
  }) => {
     const [loading, setLoading] = useState(true);
     const [bookItems, setBookItems] = useState<any[]>();
@@ -48,9 +50,9 @@ export const BookItemListView = ({
                     currentPage > 1 ? bookItems?.[bookItems?.length-1].cursor : undefined
                 )
                     .then((res: any) => { 
-                        const total = res.data.books.total;
+                        const total = res?.total ?? 0;
                         setPageCount(Math.ceil(total / MAX_PAGE_SIZE));
-                        setBookItems(res.data.books.edges);
+                        setBookItems(res?.edges ?? []);
                     })
                     .finally(() => {
                         savePageData(searchQueryValue, currentPage, pageCount, pageUrl)
@@ -68,7 +70,7 @@ export const BookItemListView = ({
             <SpaceBetween direction="vertical" size="xl">
                 { !loading 
                     ? bookItems?.length 
-                        ? <ItemCardGrid items={bookItems}/>
+                        ? <ItemCardGrid items={bookItems} userOwned={userOwned}/>
                         : <Box className="empty_list" textAlign="center"><b>{emptyMessage}</b></Box>
                     :  <Box textAlign="center">
                             <Spinner size="large" />

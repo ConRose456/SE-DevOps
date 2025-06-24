@@ -1,0 +1,15 @@
+query($first: Int!) {
+  ownedBooks {
+    books(first: $first) {
+      total
+      edges {
+        node {
+          id
+          title
+          authors
+          description
+        }
+      }
+    }
+  }
+}

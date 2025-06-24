@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Grid } from "@cloudscape-design/components";
 import { ItemCard } from "./itemCard";
 
-export const ItemCardGrid = ({items}: {items: any[] | undefined}) => {
+export const ItemCardGrid = ({items, userOwned}: {items: any[] | undefined, userOwned: boolean}) => {
     const [colspan, setColspan] = useState(getColspan());
 
     // Function to get colspan based on current window width
@@ -36,7 +36,7 @@ export const ItemCardGrid = ({items}: {items: any[] | undefined}) => {
                 {items?.map(
                     (item, i) => (
                         <div key={`item_card_grid_${i}`}>
-                            <ItemCard item={item}/>
+                            <ItemCard item={item} userOwned={userOwned}/>
                         </div>
                     )
                 ) ?? []}
