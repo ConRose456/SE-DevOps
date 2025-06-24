@@ -1,21 +1,29 @@
+import { GraphQlApiClient } from "@/clients/GraphQlApiClient";
 import { Box, Button, FormField, Header, Input, Link, Modal, Popover, SpaceBetween } from "@cloudscape-design/components";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+import signUpMutation from "../../graphql/pages/auth/signUp.graphql";
+import { AuthTokenStateContext, AuthTokenStateController } from "@/app/controllers/AuthTokenStateController";
+
+const graphqlClient = new GraphQlApiClient();
+const usernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
+const passwordRegex = /^(?=.*\d)(?=.*[^\w\s])\S{7,}$/;
 
 export const SignUpModal = (
-    { 
-        visible, 
+    {
+        visible,
         setVisible,
         setSignInVisible,
-    }: { 
-        visible: boolean, 
+    }: {
+        visible: boolean,
         setVisible: (value: boolean) => any,
         setSignInVisible: (value: boolean) => any,
     }
 ) => {
     const navigate = useNavigate();
+    const { authTokenStateController } = useContext(AuthTokenStateContext);
 
     const [loading, setLoading] = useState(false);
 
@@ -43,6 +51,10 @@ export const SignUpModal = (
         setLoading(false);
     }, [visible]);
 
+    const addInvalidInput = (invalidInput: string) => {
+        invalidInputs?.push(invalidInput);
+    }
+
     return (
         <Modal
             onDismiss={() => {
@@ -55,9 +67,9 @@ export const SignUpModal = (
             footer={
                 <Box float="right">
                     <SpaceBetween direction="horizontal" size="xs">
-                        <Button 
-                            variant="link" 
-                            disabled={loading} 
+                        <Button
+                            variant="link"
+                            disabled={loading}
                             onClick={() => {
                                 setVisible(false);
                                 navigate("/", { replace: true });
@@ -69,7 +81,22 @@ export const SignUpModal = (
                             disabled={loading}
                             onClick={async () => {
                                 setLoading(true);
-                                setLoading(false);
+                                const success = await signUp({
+                                    username: enteredUsername,
+                                    password,
+                                    confirmPassword
+                                }, addInvalidInput)
+                                if (success) {
+                                    setInvalidInputs([]);
+                                    authTokenStateController.setIsAuthorised(
+                                        AuthTokenStateController.isAuthorized()
+                                    );
+                                    window.location.reload();
+                                    setLoading(false);
+                                    setVisible(false);
+                                } else {
+                                    setLoading(false);
+                                }
                             }}
                         >
                             Sign Up
@@ -78,10 +105,10 @@ export const SignUpModal = (
                 </Box>
             }
             header={
-                <Header 
+                <Header
                     info={
-                        <Popover 
-                            header="Sign Up" 
+                        <Popover
+                            header="Sign Up"
                             content="You can sign up and create an account here."
                         >
                             <Link>info</Link>
@@ -116,23 +143,94 @@ export const SignUpModal = (
                 <FormField
                     description={
                         <div>
-                          If you have already made an account login here: {" "}
-                          <Link
-                            variant="primary"
-                            fontSize="body-s"
-                            onFollow={() => {
-                                if (!loading) {
-                                    setSignInVisible(true);
-                                    setVisible(false);
-                                }
-                            }}
-                          >
-                            Login
-                          </Link>
+                            If you have already made an account login here: {" "}
+                            <Link
+                                variant="primary"
+                                fontSize="body-s"
+                                onFollow={() => {
+                                    if (!loading) {
+                                        setSignInVisible(true);
+                                        setVisible(false);
+                                    }
+                                }}
+                            >
+                                Login
+                            </Link>
                         </div>
                     }
                 />
             </SpaceBetween>
         </Modal>
     );
+}
+
+const signUp = async (
+    input: { 
+        username: string, 
+        password: string, 
+        confirmPassword: string 
+    }, 
+    addInvalidInputs: (input: string) => void
+) => {
+    if (validateInputs(input, addInvalidInputs)) {    
+    const response = await graphqlClient.fetch(
+        signUpMutation,
+        {
+            username: input.username,
+            password: input.password
+        }
+    ).then((res) => {
+        const response = res?.data;
+        if (response) {
+            const { signUp } = response;
+            if (signUp?.alreadyExists) {
+                addInvalidInputs("username_exists");
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }).catch((error) => {
+        console.log(`[FAILED TO SIGN UP] - ${error}`);
+        return false;
+    });
+    return response;
+    }
+    return false;
+}
+
+const validateInputs = (
+    input: { 
+        username: string, 
+        password: string, 
+        confirmPassword: string 
+    },
+    addInvalidInputs: (input: string) => void
+) => {
+    const issues = [];
+    if (!validateUsername(input.username)) {
+        addInvalidInputs("username");
+        issues.push("userame");
+    }
+    if (!validatePassword(input.password)) {
+        addInvalidInputs("password_invalid");
+        issues.push("password");
+    }
+    if (!isPasswordEqual(input.password, input.confirmPassword)) {
+        addInvalidInputs("password_not_equal");
+        issues.push("password");
+    }
+    return !issues.length ? true : false;
+}
+
+const validateUsername = (username: string): boolean => {
+    return usernameRegex.test(username);
+}
+
+const validatePassword = (password: string): boolean => {
+    return passwordRegex.test(password);
+}
+
+const isPasswordEqual = (password: string, confirmPassword: string) => {
+    return password === confirmPassword;
 }
