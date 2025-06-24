@@ -24,9 +24,6 @@ export const SignUpModal = (
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
-    const [firstName, setFirstName] = useState("");
-    const [secondName, setSecondName] = useState("");
-
     const [invalidInputs, setInvalidInputs] = useState<string[]>();
 
     const getUsernameErrorText = () => {
@@ -39,8 +36,6 @@ export const SignUpModal = (
     }
 
     useEffect(() => {
-        setFirstName("");
-        setSecondName("");
         setEnteredUsername("");
         setPassword("");
         setConfirmPassword("");
@@ -97,20 +92,6 @@ export const SignUpModal = (
                 </Header>}
         >
             <SpaceBetween direction="vertical" size="m">
-
-                <FormField
-                    label="First Name"
-                    description="Enter your First Name"
-                    errorText={invalidInputs?.includes("firstName") ? "You must provide a first name." : ""}
-                >
-                    <Input value={firstName} onChange={({ detail }) => setFirstName(detail.value)} placeholder="first name" />
-                </FormField>
-                <FormField
-                    label={<span>Second Name <i> - optional</i></span>}
-                    description="Enter your Second Name"
-                >
-                    <Input value={secondName} onChange={({ detail }) => setSecondName(detail.value)} placeholder="second name" />
-                </FormField>
                 <FormField
                     label="Username"
                     description="This username will be used when you log in to your new account."
