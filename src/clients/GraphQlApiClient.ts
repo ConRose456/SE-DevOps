@@ -19,10 +19,9 @@ export class GraphQlApiClient {
         .then((res) => res.json())
         .then((result) => {
             if (result.errors) {
-                console.log(JSON.stringify(result.errors, null, 2));
+                console.log("Internal Server Error");
             }
             return result ?? {};
         })
-        .catch((error) => console.log(error));
     }
 }

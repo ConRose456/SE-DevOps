@@ -15,7 +15,6 @@ import { useEffect } from "react";
 import { GraphQlApiClient } from "@/clients/GraphQlApiClient";
 
 import signInMutation from "../../graphql/pages/auth/signIn.graphql";
-
 const graphqlClient = new GraphQlApiClient();
 
 export const SignInModal = (
@@ -69,16 +68,19 @@ export const SignInModal = (
                                         username: enteredUsername,
                                         password: enteredPassword
                                     }
-                                ).then(async () => {
-                                    await AuthTokenStateController.isAuthorized()
-                                        .then(({ isValid }) => 
-                                            authTokenStateController.setIsAuthorised(isValid)
+                                ).then(async (res) => {
+                                    if (res?.errors) {
+                                        setInvalidInputs(true);
+                                    } else {
+                                        await AuthTokenStateController.isAuthorized()
+                                        .then((data) => 
+                                            authTokenStateController.setIsAuthorised(data?.isValid)
                                         )
-                                    window.location.reload()
-                                });
-
+                                         setVisible(false);
+                                        window.location.reload()
+                                    }
+                                })
                                 setLoading(false);
-                                setVisible(false);
                             }}>Login</Button>
                     </SpaceBetween>
                 </Box>
