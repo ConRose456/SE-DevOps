@@ -10,11 +10,17 @@ import "./globals.css";
 import { SignInModal } from './components/signInComponent/signInModal';
 import { AuthTokenStateContext, AuthTokenStateController } from './controllers/AuthTokenStateController';
 
+const defaultSideNavItems = [
+  { type: 'link', text: `Home`, href: `#` },
+  { type: 'link', text: `Owned Books`, href: `#/owned_books`},
+];
+
 export default function PageLayout() {
   const { authTokenStateController, userDisplayTextUseState } = useContext(AuthTokenStateContext);
   const { shouldSignUp, setShouldSignUp } = React.useContext(SignUpContext);
 
   const [isSignInVisible, setSignInVisible] = React.useState(false);
+  const [sideNavItemState, setSideNaveItemState]= React.useState<Array<any>>(defaultSideNavItems);
 
   // Ensures UX update on auth change and intital load
   useEffect(() => {
@@ -28,6 +34,7 @@ export default function PageLayout() {
             }
           }
         })
+      setSideNaveItemState(await getSideNavitems());
       userDisplayTextUseState.setUserDisplayText(
         authTokenStateController.isAuthorized 
           ? await AuthTokenStateController.getUserDisplayText()
@@ -38,7 +45,7 @@ export default function PageLayout() {
 
   // This updates UI on user auth token timeout
   useEffect(() => {
-    const checkAuthed = () => {
+    const checkAuthed = async () => {
       if (!authTokenStateController.isAuthorized()) {
         authTokenStateController.setIsAuthorised(false);
         userDisplayTextUseState.setUserDisplayText("");
@@ -62,6 +69,16 @@ export default function PageLayout() {
             { itemType: "action", text: "Sign Up", id: "sign_up" }
         ];
     }
+
+  const getSideNavitems = async () => {
+    return await AuthTokenStateController.isAdmin().then((isAdminAuthed) => {
+      return isAdminAuthed ? [
+        { type: 'link', text: `Home`, href: `#` },
+        { type: 'link', text: `Owned Books`, href: `#/owned_books`},
+        { type: 'link', text: `Manage Users`, href: `#/manage_users` }
+      ] : defaultSideNavItems;
+    })
+  }
 
   return (
     <div>
@@ -103,10 +120,7 @@ export default function PageLayout() {
                 href: "#",
                 text: "Book Wise"
               }}
-              items={[
-                { type: 'link', text: `Home`, href: `#` },
-                { type: 'link', text: `Owned Books`, href: `#/owned_books`},
-              ]}
+              items={sideNavItemState}
             />
           }
           content={

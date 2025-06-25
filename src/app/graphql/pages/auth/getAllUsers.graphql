@@ -1,0 +1,8 @@
+query {
+  auth {
+    allUsers {
+      username
+      isAdmin
+    }
+  }
+}
