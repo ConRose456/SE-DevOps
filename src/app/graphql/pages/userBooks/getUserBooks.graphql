@@ -1,8 +1,15 @@
-query($first: Int!) {
+query($first: Int!, $after: String, $titleTextFilter: String) {
   ownedBooks {
-    books(first: $first) {
+    books(
+        first: $first
+        after: $after
+        filter: {
+            titleText: $titleTextFilter
+        }
+    ) {
       total
       edges {
+        cursor
         node {
           id
           title

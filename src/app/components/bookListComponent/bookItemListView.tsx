@@ -12,7 +12,7 @@ export const PaginationContext = createContext({
     setCurrentPage: (value: any): any => value
 });
 
-export const MAX_PAGE_SIZE = 2;
+export const MAX_PAGE_SIZE = 21;
 
 export const BookItemListView = ({
     searchQueryValue,
@@ -44,7 +44,6 @@ export const BookItemListView = ({
         (async () => {
             if (defaultsSet) {
                 setLoading(true);
-                console.log(searchQueryValue);
                 await fetchDataCallback(
                     searchQueryValue ?? "",
                     currentPage > 1 ? bookItems?.[bookItems?.length-1].cursor : undefined
