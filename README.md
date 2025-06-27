@@ -16,4 +16,6 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You need to run this along side the dev server for the backend service, instructions can be found here: https://github.com/ConRose456/SE-DevOpsService
 
+Finally you will need to navigate to the GraphQlAPIClient and update the API end point to the localhost domain running the backend service
+
 
