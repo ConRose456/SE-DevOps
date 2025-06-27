@@ -15,10 +15,13 @@ import { GraphQlApiClient } from "../../../clients/GraphQlApiClient";
 import addUserBook from "../../graphql/pages/userBooks/addUserBook.graphql";
 import { RemoveOwnedBookModal } from "../ownedBookComponent/removeOwnedBook";
 import { ContributeBookModal } from "../contributeBookComponent/bookContributionModal";
+import { mustSignIn } from "../isSingedInComponent";
 
 const DEFAULT_BOOK_IMAGE_PATH = "/images/bookImage.jpg"
 
 const graphqlClient = new GraphQlApiClient();
+
+const SignInProtectedContirbution = mustSignIn(ContributeBookModal);
 
 export const ItemCard = ({
     item,
@@ -108,12 +111,16 @@ export const ItemCard = ({
                     </Box>
                 }
             >
-                <ContributeBookModal 
-                    visible={contributionModalVisible} 
-                    setVisible={setContributionModalVisible} 
-                    isEdit={true}
-                    editData={{ ...node, authors: node?.authors?.join(", ") ?? "" }}
-                />
+                {
+                contributionModalVisible 
+                    ? <SignInProtectedContirbution 
+                        visible={contributionModalVisible} 
+                        setVisible={setContributionModalVisible} 
+                        isEdit={true}
+                        editData={{ ...node, authors: node?.authors?.join(", ") ?? "" }}
+                    />
+                    : <div />
+                }
                 <UserOwnsBookModal
                     visible={addModalVisible}
                     setVisible={setAddModalVisible}
