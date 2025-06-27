@@ -65,7 +65,7 @@ export const Home = () => {
                                 <Link variant="info">Info</Link>
                             </Popover>
                         }
-                        description="Search or browse for you favourite books and add them to your collection."
+                        description="Search or browse for your favourite books and add them to your collection."
                         actions={
                             <Button
                                 variant="primary"
